@@ -19,4 +19,3 @@ class Product(Base):
 
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
-    seller = relationship("User", back_populates="products")  # New
