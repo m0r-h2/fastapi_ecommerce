@@ -1,6 +1,6 @@
 from sqlalchemy import String, Boolean, Float, Integer
-from sqlalchemy.orm import Mapped, mapped_column, relationship  # New
-from sqlalchemy import ForeignKey  # New
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 
 from app.database import Base
 
@@ -16,6 +16,7 @@ class Product(Base):
     stock: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
-
+    seller_id: Mapped[int] = mapped_column(ForeignKey("user.id"), back_populatwe="products")
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
+    seller = relationship("User", back_populates="products")
