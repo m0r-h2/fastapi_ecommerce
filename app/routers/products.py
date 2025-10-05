@@ -8,6 +8,8 @@ from app.models.users import User as UserModel
 from app.models.products import Product as ProductModel
 from app.models.categories import Category as CategoryModel
 from app.schemas import Product as ProductSchema, ProductCreate
+from app.models.reviews import Review as ReviewModel
+from app.schemas import Review as ReviewResponse
 from app.db_depends import get_async_db
 
 # Создаём маршрутизатор для товаров
@@ -17,7 +19,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[ProductSchema])
+@router.get("/", response_model=list[ProductSchema],status_code=status.HTTP_200_OK)
 async def get_all_products(db: AsyncSession = Depends(get_async_db)):
     """
     Возвращает список всех активных товаров.
@@ -81,6 +83,18 @@ async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db))
     return product
 
 
+@router.get("/{product_id}/reviews/",response_model=list[ReviewResponse],status_code=status.HTTP_200_OK)
+async def get_product_id_reviews(product_id: int, db: AsyncSession = Depends(get_async_db)):
+    stmt_product = await db.scalars(select(ProductModel).where(ProductModel.id == product_id,
+                                           ProductModel.is_active == True))
+    product = stmt_product.first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Товар не существует или неактивен")
+
+    stmt_review = await db.scalars(select(ReviewModel).where(ReviewModel.product_id == product_id,
+                                          ReviewModel.is_active == True))
+    result = stmt_review.all()
+    return result
 
 
 @router.put("/{product_id}", response_model=ProductSchema)

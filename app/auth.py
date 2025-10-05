@@ -32,16 +32,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     return pwd_context.verify(plain_password, hashed_password)
 
-import logging
-log = logging.getLogger(__name__)
 
 def create_access_token(data: dict):
     """
     Создаёт JWT с payload (sub, role, id, exp).
     """
-    log.info(f"SECRET_KEY type: {type(SECRET_KEY)}")
-    log.info(f"SECRET_KEY value: {SECRET_KEY}")
-
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -94,5 +89,16 @@ async def get_current_seller(current_user: UserModel = Depends(get_current_user)
     """
     if current_user.role != "seller":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only sellers can perform this action")
+    return current_user
+
+async def get_current_buyer(current_user: UserModel = Depends(get_current_user)):
+    if current_user.role != "buyer":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only buyer can perform this action")
+    return current_user
+
+
+async def get_current_admin(current_user: UserModel = Depends(get_current_user)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only admin can perform this action")
     return current_user
 
