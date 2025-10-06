@@ -3,20 +3,12 @@ from typing import Optional
 from datetime import datetime
 
 class CategoryCreate(BaseModel):
-    """
-    Модель для создания и обновления категории.
-    Используется в POST и PUT запросах.
-    """
     name: str = Field(..., min_length=3, max_length=50,
                       description="Название категории (3-50 символов)")
     parent_id: Optional[int] = Field(None, description="ID родительской категории, если есть")
 
 
 class Category(BaseModel):
-    """
-    Модель для ответа с данными категории.
-    Используется в GET-запросах.
-    """
     id: int = Field(..., description="Уникальный идентификатор категории")
     name: str = Field(..., description="Название категории")
     parent_id: Optional[int] = Field(None, description="ID родительской категории, если есть")
@@ -26,10 +18,6 @@ class Category(BaseModel):
 
 
 class ProductCreate(BaseModel):
-    """
-    Модель для создания и обновления товара.
-    Используется в POST и PUT запросах.
-    """
     name: str = Field(..., min_length=3, max_length=100,
                       description="Название товара (3-100 символов)")
     description: Optional[str] = Field(None, max_length=500,
@@ -41,10 +29,6 @@ class ProductCreate(BaseModel):
 
 
 class Product(BaseModel):
-    """
-    Модель для ответа с данными товара.
-    Используется в GET-запросах.
-    """
     id: int = Field(..., description="Уникальный идентификатор товара")
     name: str = Field(..., description="Название товара")
     description: Optional[str] = Field(None, description="Описание товара")

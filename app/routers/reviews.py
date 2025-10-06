@@ -42,7 +42,7 @@ async def create_review(review: ReviewCreate,
                                                          ProductModel.is_active == True))
     result_product = stmt_product.first()
     if not result_product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Товар не существует или неактивен")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
 
     db_review = ReviewModel(**review.model_dump(),user_id=current_user.id)
     db.add(db_review)
@@ -58,7 +58,7 @@ async def delete_review(review_id: int,
                                                               ReviewModel.is_active == True))
     review = stmt_review.first()
     if not review:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Коменнтарий не существует или неактивен")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Review not found or inactive")
     if current_user:
         pass
     await db.execute(update(ReviewModel).where(ReviewModel.id == review_id).values(is_active=False))
