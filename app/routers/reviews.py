@@ -47,6 +47,9 @@ async def create_review(review: ReviewCreate,
     db_review = ReviewModel(**review.model_dump(),user_id=current_user.id)
     db.add(db_review)
     await db.commit()
+
+    await update_product_rating(db, review.product_id)
+
     return db_review
 
 
@@ -65,7 +68,7 @@ async def delete_review(review_id: int,
     await db.commit()
     await db.refresh(review)
 
-    update_product_rating(db,review.product_id)
+    await update_product_rating(db,review.product_id)
 
     return {"message": "Review deleted"}
 
