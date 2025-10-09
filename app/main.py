@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-
 from app.routers import categories, products, users, reviews
+from .log import log_middleware
 
 # Создаём приложение FastAPI
 app = FastAPI(
     title="FastAPI Интернет-магазин",
     version="0.1.0",
 )
+
+app.middleware("http")(log_middleware)
 
 # Подключаем маршруты категорий и товаров
 app.include_router(categories.router)
