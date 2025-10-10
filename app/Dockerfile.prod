@@ -1,4 +1,4 @@
-FROM python:3.13-alpine
+FROM tiangolo/uvicorn-gunicorn:python3.11-slim
 
 # устанавливаем переменные окружения
 ENV HOME=/home/fast \
@@ -11,8 +11,8 @@ ENV HOME=/home/fast \
 # создаем группу fast
 # создаем отдельного пользователя fast
 RUN mkdir -p $APP_HOME \
-  && addgroup -S fast \
-  && adduser -S fast -G fast
+ && groupadd -r fast\
+ && useradd -r -g fast fast
 
 # устанавливаем рабочую директорию
 WORKDIR $HOME
