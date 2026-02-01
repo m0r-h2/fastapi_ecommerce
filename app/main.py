@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import categories, products, users, reviews
+from app.api import categories, products, users, reviews
 from .log import log_middleware
 
 # Создаём приложение FastAPI

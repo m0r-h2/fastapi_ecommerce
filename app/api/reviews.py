@@ -3,12 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db_depends import get_async_db
 from sqlalchemy import select, update
 from sqlalchemy.sql import func
-from app.models.users import User
+from app.db.models.users import User
 from app.auth import get_current_admin
 from app.auth import get_current_buyer
-from app.models.reviews import Review as ReviewModel
+from app.db.models import Review as ReviewModel
 from app.schemas import Review as ReviewResponse, ReviewCreate
-from app.models.products import Product as ProductModel
+from app.db.models.products import Product as ProductModel
 
 router = APIRouter(prefix="/reviews",tags=["reviews"])
 

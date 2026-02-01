@@ -5,7 +5,7 @@ from datetime import datetime
 class CategoryCreate(BaseModel):
     name: str = Field(..., min_length=3, max_length=50,
                       description="Название категории (3-50 символов)")
-    parent_id: Optional[int] = Field(None, description="ID родительской категории, если есть")
+    parent_id: Optional[int|None] = Field(None, description="ID родительской категории, если есть")
 
 
 class Category(BaseModel):
