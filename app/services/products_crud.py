@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import Product as ProductModel, Category as CategoryModel, Review as ReviewModel
-from core.exceptions import CategoryUnavailableError, ProductUnavailableError, ProductPermissionDeniedError
+from app.core.exceptions import CategoryUnavailableError, ProductUnavailableError, ProductPermissionDeniedError
 
 
 async def get_all_products_db(db: AsyncSession):

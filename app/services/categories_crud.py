@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import Category as CategoryModel
-from core.exceptions import CategoryNotFoundError, ParentCategoryNotFoundError, CategorySelfParentError
+from app.core.exceptions import CategoryNotFoundError, ParentCategoryNotFoundError, CategorySelfParentError
 
 
 async def get_all_categories_db(db: AsyncSession):
