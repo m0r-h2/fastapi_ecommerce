@@ -23,14 +23,9 @@ async def get_all_products(db: AsyncSession = Depends(get_async_db)):
 
 
 @router.post("/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
-async def create_product(
-    product: ProductCreate,
-    db: AsyncSession = Depends(get_async_db),
-    current_user: UserModel = Depends(get_current_seller)
-):
+async def create_product(product: ProductCreate,db: AsyncSession = Depends(get_async_db),
+                         current_user: UserModel = Depends(get_current_seller)):
     result = await create_product_db(product=product, seller_id=current_user.id, db=db)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category not found or inactive")
     return result
 
 
@@ -38,8 +33,6 @@ async def create_product(
 @router.get("/category/{category_id}", response_model=list[ProductSchema], status_code=status.HTTP_200_OK)
 async def get_products_by_category(category_id: int, db: AsyncSession = Depends(get_async_db)):
     result = await get_products_by_category_db(category_id, db)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found or inactive")
     return result
 
 
@@ -47,8 +40,6 @@ async def get_products_by_category(category_id: int, db: AsyncSession = Depends(
 @router.get("/{product_id}", response_model=ProductSchema, status_code=status.HTTP_200_OK)
 async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db)):
     result = await get_product_db(product_id, db)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
     return result
 
 
@@ -56,8 +47,6 @@ async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db))
 @router.get("/{product_id}/reviews/",response_model=list[ReviewResponse],status_code=status.HTTP_200_OK)
 async def get_product_id_reviews(product_id: int, db: AsyncSession = Depends(get_async_db)):
     result = await get_product_id_reviews_db(product_id, db)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
     return result
 
 
@@ -70,12 +59,6 @@ async def update_product(
     current_user: UserModel = Depends(get_current_seller)
 ):
     result = await update_product_db(product_id, product, db, user_id=current_user.id)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
-    if result == 4:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only update your own products")
-    if result == 5:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category not found or inactive")
     return result
 
 
@@ -87,9 +70,5 @@ async def delete_product(
     current_user: UserModel = Depends(get_current_seller)
 ):
     result = await delete_product_db(product_id, db, user_id=current_user.id)
-    if result == 3:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found or inactive")
-    if result == 4:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only delete your own products")
     return result
 
