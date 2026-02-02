@@ -29,16 +29,16 @@ async def update_category_db(category_id: int, category, db: AsyncSession):
     result = await db.scalars(stmt)
     db_category = result.first()
     if not db_category:
-        return CategoryNotFoundError()
+        raise CategoryNotFoundError()
 
     if category.parent_id is not None:
         parent_stmt = select(CategoryModel).where(CategoryModel.id == category.parent_id)
         parent_result = await db.scalars(parent_stmt)
         parent = parent_result.first()
         if not parent:
-            return ParentCategoryNotFoundError()
+            raise ParentCategoryNotFoundError()
         if parent.id == category_id:
-            return CategorySelfParentError()
+            raise CategorySelfParentError()
 
     update_data = category.model_dump(exclude_unset=True)
     await db.execute(
@@ -56,7 +56,7 @@ async def delete_category_db(category_id: int, db: AsyncSession):
     result = await db.scalars(stmt)
     db_category = result.first()
     if not db_category:
-        return CategoryNotFoundError()
+        raise CategoryNotFoundError()
 
     await db.execute(
         update(CategoryModel)
