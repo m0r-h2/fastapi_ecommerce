@@ -41,6 +41,13 @@ class ProductUnavailableError(DomainError):
 
 
 
+class ReviewUnavailableError(DomainError):
+    status_code = 404
+    detail = "Review not found or inactive"
+    error_code = "REVIEW_UNAVAILABLE"
+
+
+
 class ProductPermissionDeniedError(DomainError):
     status_code = 403
     detail = "You can only update your own products"
