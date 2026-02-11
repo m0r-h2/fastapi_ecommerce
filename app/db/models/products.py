@@ -15,10 +15,14 @@ class Product(Base):
     image_url: Mapped[str | None] = mapped_column(String(200), nullable=True)
     stock: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
+    category_id: Mapped[int] = mapped_column(
+        ForeignKey("categories.id"), nullable=False
+    )
     seller_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    rating: Mapped[float] = mapped_column(Float, default=0.0,nullable=False)
+    rating: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
 
     category: Mapped["Category"] = relationship("Category", back_populates="products")
     seller: Mapped["User"] = relationship("User", back_populates="products")
-    reviews: Mapped[list["Review"]] = relationship("Review", back_populates="product", cascade="all, delete-orphan")
+    reviews: Mapped[list["Review"]] = relationship(
+        "Review", back_populates="product", cascade="all, delete-orphan"
+    )

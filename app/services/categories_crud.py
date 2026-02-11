@@ -1,13 +1,18 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import Category as CategoryModel
-from app.core.exceptions import CategoryNotFoundError, ParentCategoryNotFoundError, CategorySelfParentError
+from app.core.exceptions import (
+    CategoryNotFoundError,
+    ParentCategoryNotFoundError,
+    CategorySelfParentError,
+)
 
 
 async def get_all_categories_db(db: AsyncSession):
-    result = await db.execute(select(CategoryModel).where(CategoryModel.is_active == True))
+    result = await db.execute(
+        select(CategoryModel).where(CategoryModel.is_active == True)
+    )
     return result.scalars().all()
-
 
 
 async def create_category_db(category, db: AsyncSession):
@@ -23,7 +28,6 @@ async def create_category_db(category, db: AsyncSession):
     return db_category
 
 
-
 async def update_category_db(category_id: int, category, db: AsyncSession):
     stmt = select(CategoryModel).where(CategoryModel.id == category_id)
     result = await db.scalars(stmt)
@@ -32,7 +36,9 @@ async def update_category_db(category_id: int, category, db: AsyncSession):
         raise CategoryNotFoundError()
 
     if category.parent_id is not None:
-        parent_stmt = select(CategoryModel).where(CategoryModel.id == category.parent_id)
+        parent_stmt = select(CategoryModel).where(
+            CategoryModel.id == category.parent_id
+        )
         parent_result = await db.scalars(parent_stmt)
         parent = parent_result.first()
         if not parent:
@@ -50,7 +56,6 @@ async def update_category_db(category_id: int, category, db: AsyncSession):
     return db_category
 
 
-
 async def delete_category_db(category_id: int, db: AsyncSession):
     stmt = select(CategoryModel).where(CategoryModel.id == category_id)
     result = await db.scalars(stmt)
@@ -65,4 +70,3 @@ async def delete_category_db(category_id: int, db: AsyncSession):
     )
     await db.commit()
     return db_category
-

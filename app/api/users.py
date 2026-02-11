@@ -6,7 +6,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.db.models.users import User as UserModel
 from app.schemas import UserCreate, User as UserSchema
 from app.db_depends import get_async_db
-from app.auth import hash_password, verify_password, create_access_token, create_refresh_token
+from app.auth import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -19,14 +24,13 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_async_db)
     # Проверка уникальности email
     result = await db.scalars(select(UserModel).where(UserModel.email == user.email))
     if result.first():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Email already registered")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
+        )
 
     # Создание объекта пользователя с хешированным паролем
     db_user = UserModel(
-        email=user.email,
-        hashed_password=hash_password(user.password),
-        role=user.role
+        email=user.email, hashed_password=hash_password(user.password), role=user.role
     )
 
     # Добавление в сессию и сохранение в базе
@@ -36,12 +40,16 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_async_db)
 
 
 @router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(),
-                db: AsyncSession = Depends(get_async_db)):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_async_db),
+):
     """
     Аутентифицирует пользователя и возвращает JWT с email, role и id.
     """
-    result = await db.scalars(select(UserModel).where(UserModel.email == form_data.username))
+    result = await db.scalars(
+        select(UserModel).where(UserModel.email == form_data.username)
+    )
     user = result.first()
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
@@ -49,13 +57,22 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = create_access_token(data={"sub": user.email, "role": user.role, "id": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.email, "role": user.role, "id": user.id})
-    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user.role, "id": user.id}
+    )
+    refresh_token = create_refresh_token(
+        data={"sub": user.email, "role": user.role, "id": user.id}
+    )
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 import jwt
-from app.config import SECRET_KEY,ALGORITHM
+from app.config import SECRET_KEY, ALGORITHM
+
 
 @router.post("/refresh_token")
 async def refresh_token_(refresh_token: str, db: AsyncSession = Depends(get_async_db)):
@@ -74,9 +91,13 @@ async def refresh_token_(refresh_token: str, db: AsyncSession = Depends(get_asyn
             raise credentials_exception
     except jwt.PyJWTError:
         raise credentials_exception
-    result = await db.scalars(select(UserModel).where(UserModel.email == email,UserModel.is_active == True))
+    result = await db.scalars(
+        select(UserModel).where(UserModel.email == email, UserModel.is_active == True)
+    )
     user = result.first()
     if user is None:
         raise credentials_exception
-    access_token = create_access_token(data={"sub": user.email, "role": user.role, "id": user.id})
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user.role, "id": user.id}
+    )
     return {"access_token": access_token, "token_type": "bearer"}
