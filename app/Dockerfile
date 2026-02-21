@@ -14,6 +14,9 @@ RUN mkdir -p $APP_HOME \
   && addgroup -S fast \
   && adduser -S fast -G fast
 
+# устанавливаем системные зависимости для pg_isready и bash
+RUN apk add --no-cache postgresql-client bash
+
 # устанавливаем рабочую директорию
 WORKDIR $HOME
 
@@ -23,7 +26,7 @@ COPY requirements.txt alembic.ini .env .
 
 # обновление pip
 # установка зависимостей из списка requirements.txt
-# изменение владельца, для всех директорий и файлов проекта, на пользователя fast
+# изменение владельца для всех директорий и файлов проекта на пользователя fast
 RUN pip install --upgrade pip \
  && pip install -r requirements.txt \
  && chown -R fast:fast .

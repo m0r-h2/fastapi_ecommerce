@@ -2,11 +2,12 @@ from uuid import uuid4
 from fastapi.responses import JSONResponse
 from fastapi import Request
 from loguru import logger
+from app.core.config import settings
 
 logger.add(
     "info.log",
-    format="Log: [{extra[log_id]}:{time} - {level} - {message}]",
-    level="INFO",
+    format=settings.logging.format,
+    level=settings.logging.log_lvl,
     enqueue=True,
 )
 

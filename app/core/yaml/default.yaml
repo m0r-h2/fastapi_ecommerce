@@ -1,0 +1,10 @@
+FAST:
+  app:
+    title: FastAPI Internet-Shop
+  logging:
+    level: INFO
+  db:
+    host: localhost
+    port: 5432
+    user: username
+    password: password

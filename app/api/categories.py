@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends, status
+from fastapi_cache.decorator import cache
 
 from app.services.categories_crud import (
     get_all_categories_db,
     create_category_db,
     update_category_db,
+    delete_category_db,
 )
 from app.schemas import Category as CategorySchema, CategoryCreate
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db_depends import get_async_db
 
-from fastapi_cache.decorator import cache
 
 router = APIRouter(
     prefix="/categories",
@@ -43,5 +44,5 @@ async def update_category(
 
 @router.delete("/{category_id}", response_model=CategorySchema)
 async def delete_category(category_id: int, db: AsyncSession = Depends(get_async_db)):
-    result = await create_category_db(category_id, db)
+    result = await delete_category_db(category_id, db)
     return result

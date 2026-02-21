@@ -25,7 +25,6 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[ProductSchema], status_code=status.HTTP_200_OK)
-@cache(expire=60)
 async def get_all_products(db: AsyncSession = Depends(get_async_db)):
     result = await get_all_products_db(db=db)
     return result
@@ -36,7 +35,6 @@ async def get_all_products(db: AsyncSession = Depends(get_async_db)):
     response_model=list[ProductSchema],
     status_code=status.HTTP_200_OK,
 )
-@cache(expire=60)
 async def get_products_by_category(
     category_id: int, db: AsyncSession = Depends(get_async_db)
 ):
@@ -47,7 +45,6 @@ async def get_products_by_category(
 @router.get(
     "/{product_id}", response_model=ProductSchema, status_code=status.HTTP_200_OK
 )
-@cache(expire=60)
 async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db)):
     result = await get_product_db(product_id, db)
     return result
@@ -58,7 +55,6 @@ async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db))
     response_model=list[ReviewResponse],
     status_code=status.HTTP_200_OK,
 )
-@cache(expire=60)
 async def get_product_id_reviews(
     product_id: int, db: AsyncSession = Depends(get_async_db)
 ):

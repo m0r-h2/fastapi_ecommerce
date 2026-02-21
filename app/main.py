@@ -6,19 +6,29 @@ from .log import log_middleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
-
-from redis import asyncio as aioredis
+from app.core.config import settings
+from redis.asyncio import Redis
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    print("REDIS INIT")
-    redis = aioredis.from_url("redis://localhost:6379")
-    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    redis = Redis(
+        host=settings.redis.host,
+        port=settings.redis.port,
+        db=settings.redis.db.cache,
+    )
+    FastAPICache.init(
+        RedisBackend(redis),
+        prefix=settings.cache.prefix
+    )
     yield
 
 
-app = FastAPI(title="FastAPI Интернет-магазин", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title=settings.app.title,
+              version=settings.app.version,
+              port=settings.app.port,
+              host=settings.app.host,
+              lifespan=lifespan)
 
 
 app.middleware("http")(log_middleware)
