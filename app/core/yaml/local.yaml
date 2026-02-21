@@ -1,0 +1,10 @@
+FAST:
+  app:
+    title: FastAPI Internet-Shop
+  logging:
+    level: INFO
+  db:
+    host: db
+    port: 5432
+    user: magazine_user
+    password: "2532"
