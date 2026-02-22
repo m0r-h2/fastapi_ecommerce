@@ -59,7 +59,9 @@ class RedisDB(BaseModel):
     cache: int = 0
 
 class CacheNamespace(BaseModel):
-    user_list: str = "users-list"
+    category_list: str = "category-list"
+    products_list: str = "products-list"
+
 
 
 class RedisConfig(BaseModel):
