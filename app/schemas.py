@@ -10,18 +10,19 @@ class CategoryCreate(BaseModel):
         max_length=50,
         description="Название категории (3-50 символов)",
     )
-    parent_id: None | int = Field(default=None,
-                                  gt=0,
-                                  json_schema_extra={"example": None},
-                                  description="ID родительской категории, если есть",
+    parent_id: None | int = Field(
+        default=None,
+        gt=0,
+        json_schema_extra={"example": None},
+        description="ID родительской категории, если есть",
     )
 
 
 class Category(BaseModel):
     id: int = Field(..., description="Уникальный идентификатор категории")
     name: str = Field(..., description="Название категории")
-    parent_id: None | int = Field(default=None,
-                                  description="ID родительской категории, если есть"
+    parent_id: None | int = Field(
+        default=None, description="ID родительской категории, если есть"
     )
     is_active: bool = Field(..., description="Активность категории")
 
