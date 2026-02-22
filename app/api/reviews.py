@@ -13,6 +13,7 @@ router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 
 @router.get("/", response_model=list[ReviewResponse], status_code=status.HTTP_200_OK)
+@cache(expire=60)
 async def get_review(db: AsyncSession = Depends(get_async_db)):
     result = await get_review_db(db)
     return result
