@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, status
 from fastapi_cache.decorator import cache
+from fastapi_cache.key_builder import default_key_builder
 
+from app.core.config import settings
 from app.services.categories_crud import (
     get_all_categories_db,
     create_category_db,
@@ -12,7 +14,6 @@ from app.schemas import Category as CategorySchema, CategoryCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db_depends import get_async_db
 
-
 router = APIRouter(
     prefix="/categories",
     tags=["category"],
@@ -20,7 +21,10 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[CategorySchema], status_code=status.HTTP_200_OK)
-@cache(expire=60)
+@cache(
+    expire=60,
+    namespace=settings.cache.namespace.category_list,
+)
 async def get_all_categories(db: AsyncSession = Depends(get_async_db)):
     result = await get_all_categories_db(db)
     return result
