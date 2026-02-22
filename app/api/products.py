@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_seller
+from app.core.config import settings
 from app.db.models.users import User as UserModel
 from app.schemas import Product as ProductSchema, ProductCreate
 from app.schemas import Review as ReviewResponse
@@ -25,7 +26,8 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[ProductSchema], status_code=status.HTTP_200_OK)
-@cache(expire=60)
+@cache(expire=60,
+       namespace=settings.cache.namespace.products_list)
 async def get_all_products(db: AsyncSession = Depends(get_async_db)):
     result = await get_all_products_db(db=db)
     return result
