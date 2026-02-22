@@ -1,16 +1,20 @@
 services:
   web:
-    # Берем Dockerfile из каталога app
     build:
       context: .
       dockerfile: ./app/Dockerfile
-    # Запускаем тестовый сервер
     command: uvicorn app.main:app --host 0.0.0.0
-    # Открываем порт 8000 внутри и снаружи
     ports:
       - 8000:8000
     depends_on:
       - db
+      - redis
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+
 
   db:
     image: postgres:18-alpine
