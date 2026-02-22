@@ -63,7 +63,7 @@ class CacheNamespace(BaseModel):
 
 
 class RedisConfig(BaseModel):
-    host: str = "redis_db"
+    host: str = "redis"
     port: int = 6379
     db: RedisDB = RedisDB()
 
