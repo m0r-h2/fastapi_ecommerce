@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi.security import OAuth2PasswordRequestForm
+import jwt
 
+from app.core.config import settings
 from app.db.models.users import User as UserModel
 from app.schemas import UserCreate, User as UserSchema
 from app.db_depends import get_async_db
@@ -70,8 +72,7 @@ async def login(
     }
 
 
-import jwt
-from app.config import SECRET_KEY, ALGORITHM
+
 
 
 @router.post("/refresh_token")
@@ -85,7 +86,8 @@ async def refresh_token_(refresh_token: str, db: AsyncSession = Depends(get_asyn
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(refresh_token, settings.auth.SECRET_KEY,
+                             algorithms=[settings.auth.ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
