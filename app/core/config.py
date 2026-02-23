@@ -15,16 +15,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CONFIG_DIR = Path(__file__).resolve().parent
-ENVS_DIR = CONFIG_DIR / "envs"
-YAML_DIR = CONFIG_DIR / "yaml"
-
-
 class AppConfig(BaseModel):
-    title: str = "FastAPI Internet-Shop"
-    version: str = "0.1.0"
-    host: str = "0.0.0.0"
-    port: int = 8000
+    title: str = os.getenv("FAST__APP__TITLE")
+    version: str = os.getenv("FAST__APP__VERSION")
+    host: str = os.getenv("FAST__APP__HOST")
+    port: int = os.getenv("FAST__APP__PORT")
 
 
 class SQLAlchemyConfig(BaseModel):
@@ -65,8 +60,8 @@ class CacheNamespace(BaseModel):
 
 
 class RedisConfig(BaseModel):
-    host: str = "redis"
-    port: int = 6379
+    host: str = os.getenv("FAST__APP__REDIS__HOST")
+    port: int = os.getenv("FAST__APP__REDIS__PORT")
     db: RedisDB = RedisDB()
 
 
@@ -95,39 +90,12 @@ class HttpConfig(BaseModel):
 
 
 class Settings(BaseSettings):
-    # model_config = SettingsConfigDict(
-    #     env_prefix="FAST__",
-    #     case_sensitive=False,
-    #     env_nested_delimiter="__",
-    #     env_file=(
-    #         ENVS_DIR / ".env.template",
-    #         ENVS_DIR / ".env"
-    #     ),
-    #     yaml_config_section="FAST",
-    #     yaml_file=(YAML_DIR / "default.yaml",
-    #                YAML_DIR / "local.yaml")
-    # )
     app: AppConfig = AppConfig()
     logging: LoggingConfig = LoggingConfig()
     db: DatabaseConfig = DatabaseConfig()
     http: HttpConfig = HttpConfig()
     redis: RedisConfig = RedisConfig()
     cache: CacheConfig = CacheConfig()
-
-    # @classmethod
-    # def settings_customise_sources(
-    #     cls,
-    #     settings_cls: type[BaseSettings],
-    #     init_settings: PydanticBaseSettingsSource,
-    #     env_settings: PydanticBaseSettingsSource,
-    #     dotenv_settings: PydanticBaseSettingsSource,
-    #     file_secret_settings: PydanticBaseSettingsSource,
-    # ) -> tuple[PydanticBaseSettingsSource, ...]:
-    #     return (
-    #         init_settings,
-    #         env_settings,
-    #         dotenv_settings,
-    #         YamlConfigSettingsSource(settings_cls),)
 
 
 settings = Settings()

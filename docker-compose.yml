@@ -5,7 +5,7 @@ services:
       dockerfile: ./app/Dockerfile
     command: uvicorn app.main:app --host 0.0.0.0
     ports:
-      - 8000:8000
+      - "${FAST__APP__PORT}:${FAST__APP__PORT}"
     depends_on:
       - db
       - redis
@@ -13,7 +13,7 @@ services:
   redis:
     image: redis:8-alpine
     ports:
-      - "6379:6379"
+      - "${FAST_APP_REDIS_PORT}:${FAST_APP_REDIS_PORT}"
 
 
   db:
@@ -21,9 +21,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_DB: magazine_db
-      POSTGRES_USER: magazine_user
-      POSTGRES_PASSWORD: 2532
+      POSTGRES_DB: ${FAST__APP__DB__NAME}
+      POSTGRES_USER: ${FAST__APP__DB__USER}
+      POSTGRES_PASSWORD: ${FAST__APP__DB__PASSWORD}
     ports:
       - "${FAST__APP__DB__PORT}:${FAST__APP__DB__PORT}"
 volumes:
