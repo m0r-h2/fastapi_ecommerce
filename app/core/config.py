@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class AppConfig(BaseModel):
     title: str = os.getenv("FAST__APP__TITLE")
     version: str = os.getenv("FAST__APP__VERSION")
@@ -53,10 +54,10 @@ class DatabaseConfig(BaseModel):
 class RedisDB(BaseModel):
     cache: int = 0
 
+
 class CacheNamespace(BaseModel):
     category_list: str = "category-list"
     products_list: str = "products-list"
-
 
 
 class RedisConfig(BaseModel):
@@ -78,12 +79,22 @@ class LoggingConfig(BaseModel):
         "WARNING",
         "ERROR",
         "CRITICAL",
-    ] = "INFO"
+    ] = os.getenv("fast__app__logging__level")
 
     @property
     def log_lvl(self) ->int:
         return getLevelNamesMapping()[self.level]
 
+
+class AuthConfig(BaseModel):
+    SECRET_KEY: str = os.getenv("FAST__APP__SECRET__KEY")
+    ALGORITHM: str = os.getenv("FAST__APP__ALGORITHM")
+    ACCESS_TOKEN_MINUTES: int = os.getenv(
+        "FAST__APP__ACCESS__TOKEN__EXPIRE__MINUTES"
+    )
+    REFRESH_TOKEN_DAYS: int = os.getenv(
+        "FAST__APP__REFRESH__TOKEN_EXPIRE__DAYS"
+    )
 
 class HttpConfig(BaseModel):
     proxy: bool = False
@@ -96,6 +107,7 @@ class Settings(BaseSettings):
     http: HttpConfig = HttpConfig()
     redis: RedisConfig = RedisConfig()
     cache: CacheConfig = CacheConfig()
+    auth: AuthConfig = AuthConfig()
 
 
 settings = Settings()

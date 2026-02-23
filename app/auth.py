@@ -6,14 +6,17 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from app.core.config import settings
 from app.db.models.users import User as UserModel
-from app.config import SECRET_KEY, ALGORITHM
 from app.db_depends import get_async_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.auth.ACCESS_TOKEN_MINUTES
+REFRESH_TOKEN_EXPIRE_DAYS = settings.auth.REFRESH_TOKEN_DAYS
+
+SECRET_KEY = settings.auth.SECRET_KEY
+ALGORITHM = settings.auth.ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
